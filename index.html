@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>GhostAPI — Erase Your Digital Footprint, Free</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#060d1a;--surface:#0a1628;--surface2:#0f1f38;--surface3:#162845;
+  --border:rgba(100,160,255,0.1);--border2:rgba(100,160,255,0.2);
+  --text:#e8f0ff;--muted:#6b8cbe;--muted2:#3d5a8a;
+  --accent:#4a9eff;--accent2:#2d7dd2;--accentg:#64b4ff;
+  --danger:#ff5a5a;--warn:#ffb547;--success:#4ade80;
+  --r:12px;--rS:8px;
+  --fh:'Syne',sans-serif;--fb:'DM Sans',sans-serif;
+  --glow:0 0 30px rgba(74,158,255,0.15);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--fb);font-size:15px;line-height:1.65;overflow-x:hidden}
+::selection{background:var(--accent);color:#000}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:#1a3a6a;border-radius:3px}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:14px 40px;border-bottom:1px solid var(--border);background:rgba(6,13,26,0.92);backdrop-filter:blur(16px)}
+.logo{font-family:var(--fh);font-size:19px;font-weight:800;letter-spacing:-0.5px;cursor:pointer;color:var(--text)}
+.logo span{color:var(--accent)}
+.logo sub{font-size:10px;font-weight:400;color:var(--muted);vertical-align:super;margin-left:4px}
+.btn-nav{background:var(--accent);color:#fff;border:none;padding:7px 18px;border-radius:var(--rS);font-family:var(--fb);font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;box-shadow:0 0 20px rgba(74,158,255,0.3)}
+.btn-nav:hover{background:var(--accent2)}
+
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:120px 24px 80px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-100px;left:50%;transform:translateX(-50%);width:800px;height:800px;background:radial-gradient(circle,rgba(74,158,255,0.07) 0%,transparent 65%);pointer-events:none}
+.chip{display:inline-flex;align-items:center;gap:7px;background:rgba(74,158,255,0.08);border:1px solid rgba(74,158,255,0.2);color:var(--accent);font-size:11px;font-weight:500;padding:5px 14px;border-radius:99px;margin-bottom:28px;letter-spacing:0.06em;text-transform:uppercase}
+.chip::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--accent);animation:blink 2s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.2}}
+h1{font-family:var(--fh);font-size:clamp(40px,7.5vw,84px);font-weight:800;line-height:0.95;letter-spacing:-3px;max-width:860px;margin-bottom:24px}
+h1 em{font-style:normal;color:var(--accent)}
+.hero-sub{font-size:17px;color:var(--muted);max-width:480px;margin:0 auto 36px;line-height:1.65;font-weight:300}
+.hero-btns{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.btn-p{background:var(--accent);color:#fff;border:none;padding:13px 30px;border-radius:var(--rS);font-family:var(--fb);font-size:15px;font-weight:500;cursor:pointer;transition:all .2s;box-shadow:var(--glow)}
+.btn-p:hover{background:var(--accent2);transform:translateY(-1px)}
+.btn-o{background:transparent;color:var(--text);border:1px solid var(--border2);padding:13px 30px;border-radius:var(--rS);font-family:var(--fb);font-size:15px;cursor:pointer;transition:all .2s}
+.btn-o:hover{border-color:var(--accent);color:var(--accent)}
+.stats{display:flex;gap:48px;margin-top:60px;justify-content:center;flex-wrap:wrap;padding-top:40px;border-top:1px solid var(--border)}
+.stat .n{font-family:var(--fh);font-size:30px;font-weight:800;color:var(--accent)}
+.stat .l{font-size:12px;color:var(--muted);margin-top:2px}
+
+#app{display:none;min-height:100vh;padding-top:66px}
+.shell{display:grid;grid-template-columns:210px 1fr;min-height:calc(100vh - 66px)}
+.side{background:var(--surface);border-right:1px solid var(--border);padding:20px 12px;display:flex;flex-direction:column}
+.slogo{font-family:var(--fh);font-size:16px;font-weight:800;padding:4px 10px;margin-bottom:20px;color:var(--text)}
+.slogo span{color:var(--accent)}
+.ni{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:var(--rS);cursor:pointer;font-size:13px;color:var(--muted);margin-bottom:2px;transition:all .15s;border:none;background:none;width:100%;text-align:left}
+.ni:hover{background:var(--surface2);color:var(--text)}
+.ni.on{background:rgba(74,158,255,0.1);color:var(--accent);border-left:2px solid var(--accent)}
+.ni-spacer{flex:1}
+.main{padding:32px 36px;overflow-y:auto;min-width:0}
+.pg{display:none}.pg.on{display:block}
+.pt{font-family:var(--fh);font-size:22px;font-weight:800;letter-spacing:-0.5px;margin-bottom:4px}
+.ps{font-size:13px;color:var(--muted);margin-bottom:20px}
+
+label{display:block;font-size:11px;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.04em}
+input,textarea,select{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--rS);color:var(--text);padding:10px 14px;font-family:var(--fb);font-size:14px;outline:none;transition:border .2s}
+input:focus,textarea:focus{border-color:rgba(74,158,255,0.5);box-shadow:0 0 0 3px rgba(74,158,255,0.06)}
+textarea{min-height:110px;resize:vertical;line-height:1.6}
+select option{background:#0a1628}
+.field{margin-bottom:14px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.sbtn{background:var(--accent);color:#fff;border:none;padding:10px 24px;border-radius:var(--rS);font-family:var(--fb);font-size:14px;font-weight:500;cursor:pointer;transition:all .2s;box-shadow:0 0 16px rgba(74,158,255,0.2)}
+.sbtn:hover{background:var(--accent2)}
+.sbtn:disabled{opacity:0.35;cursor:not-allowed}
+.sec-btn{background:transparent;border:1px solid var(--border2);color:var(--muted);padding:6px 14px;border-radius:var(--rS);font-family:var(--fb);font-size:12px;cursor:pointer}
+.sec-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+.rcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px 20px;margin-bottom:12px}
+.rcard h4{font-size:14px;font-weight:500;margin-bottom:4px}
+.rcard p{font-size:13px;color:var(--muted);line-height:1.6}
+.model-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.model-chip{padding:5px 12px;border-radius:99px;font-size:12px;cursor:pointer;border:1px solid var(--border);background:var(--surface2);color:var(--muted);transition:all .2s;font-family:var(--fb)}
+.model-chip.on{background:rgba(74,158,255,0.1);border-color:var(--accent);color:var(--accent)}
+.model-chip .mt{font-size:10px;margin-left:3px;opacity:0.6}
+
+.risk-strip{border-radius:var(--r);padding:16px 20px;margin-bottom:14px;border:1px solid}
+.rH{background:rgba(255,90,90,0.06);border-color:rgba(255,90,90,0.25)}
+.rM{background:rgba(255,181,71,0.06);border-color:rgba(255,181,71,0.25)}
+.rL{background:rgba(74,222,128,0.06);border-color:rgba(74,222,128,0.25)}
+.rl{font-family:var(--fh);font-size:20px;font-weight:800}
+.badge{display:inline-block;font-size:10px;font-weight:600;padding:2px 8px;border-radius:99px;margin-bottom:5px}
+.bH{background:rgba(255,90,90,0.12);color:#ff9090}
+.bM{background:rgba(255,181,71,0.12);color:#ffb547}
+.bL{background:rgba(74,222,128,0.12);color:#4ade80}
+
+/* fix suggestions box */
+.fix-box{background:rgba(74,158,255,0.05);border:1px solid rgba(74,158,255,0.15);border-radius:var(--rS);padding:12px 14px;margin-top:8px}
+.fix-box .fix-title{font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px}
+.fix-item{display:flex;gap:8px;font-size:12px;color:var(--muted);padding:4px 0;line-height:1.5}
+.fix-item::before{content:'→';color:var(--accent);flex-shrink:0;font-weight:600}
+
+.email-out{background:var(--surface2);border:1px solid var(--border);border-radius:var(--rS);padding:14px;font-size:13px;line-height:1.8;white-space:pre-wrap;max-height:360px;overflow-y:auto;margin-top:12px}
+.cbtn{margin-top:8px;background:transparent;border:1px solid var(--border2);color:var(--muted);padding:6px 14px;border-radius:6px;font-size:11px;cursor:pointer;font-family:var(--fb)}
+.cbtn:hover{border-color:var(--accent);color:var(--accent)}
+.loader{display:flex;align-items:center;gap:10px;padding:14px;background:var(--surface2);border-radius:var(--rS);font-size:13px;color:var(--muted);margin-top:14px}
+.spin{width:15px;height:15px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.err{background:rgba(255,90,90,0.08);border:1px solid rgba(255,90,90,0.3);color:#ff9090;padding:12px;border-radius:var(--rS);font-size:13px;margin-top:10px}
+.key-warn{background:rgba(255,181,71,0.07);border:1px solid rgba(255,181,71,0.2);border-radius:var(--rS);padding:10px 14px;margin-bottom:16px;font-size:12px;color:#ffb547}
+.key-banner{background:var(--surface2);border:1px solid var(--border);border-radius:var(--rS);padding:9px 14px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--muted)}
+.disclaimer{background:rgba(74,158,255,0.04);border:1px solid rgba(74,158,255,0.1);border-radius:var(--rS);padding:10px 14px;font-size:11px;color:var(--muted2);margin-top:14px;line-height:1.6}
+
+/* guide */
+.guide-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);margin-bottom:20px;overflow:hidden}
+.guide-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;cursor:pointer}
+.guide-header h4{font-size:13px;font-weight:500;color:var(--accent)}
+.guide-header span{font-size:11px;color:var(--muted)}
+.guide-body{padding:16px;border-top:1px solid var(--border);display:none}
+.guide-body.open{display:block}
+.search-step{display:flex;gap:12px;margin-bottom:14px;align-items:flex-start}
+.search-step:last-child{margin-bottom:0}
+.step-num{min-width:22px;height:22px;border-radius:50%;background:rgba(74,158,255,0.1);border:1px solid rgba(74,158,255,0.2);color:var(--accent);font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.step-body h5{font-size:13px;font-weight:500;margin-bottom:3px}
+.step-body p{font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:4px}
+.search-query{display:inline-block;background:var(--surface2);border:1px solid var(--border2);border-radius:4px;padding:3px 10px;font-family:monospace;font-size:12px;color:var(--accent);cursor:pointer;margin:2px 2px 2px 0}
+.search-query:hover{border-color:var(--accent)}
+
+/* idea cards */
+.idea-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-top:16px}
+.idea-card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--rS);padding:14px;font-size:13px}
+.idea-card .ic-tag{font-size:10px;color:var(--accent);font-weight:600;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px}
+.idea-card h4{font-size:13px;font-weight:500;margin-bottom:4px}
+.idea-card p{font-size:12px;color:var(--muted);line-height:1.5}
+
+@media(max-width:720px){.shell{grid-template-columns:1fr}.side{display:none}.g2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo" onclick="goLanding()">Ghost<span>API</span><sub>free</sub></div>
+  <button class="btn-nav" onclick="openApp()">Open app →</button>
+</nav>
+
+<div id="landing">
+<div class="hero">
+  <div class="chip">Free & Private — No ads, no tracking</div>
+  <h1>Delete yourself from <em>the internet.</em></h1>
+  <p class="hero-sub">Find who has your data. Get AI-written legal deletion emails. Free forever — your key, your data.</p>
+  <div class="hero-btns">
+    <button class="btn-p" onclick="openApp()">Start erasing →</button>
+    <button class="btn-o" onclick="openApp()">View demo</button>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="n">6 hrs</div><div class="l">vs weeks manually</div></div>
+    <div class="stat"><div class="n">40+</div><div class="l">data brokers covered</div></div>
+    <div class="stat"><div class="n">4</div><div class="l">AI providers supported</div></div>
+    <div class="stat"><div class="n">₹0</div><div class="l">forever, no catch</div></div>
+  </div>
+</div>
+</div>
+
+<div id="app">
+<div class="shell">
+<div class="side">
+  <div class="slogo">Ghost<span>API</span></div>
+  <button class="ni on" onclick="showPg('scan',this)">🔍 Scan</button>
+  <button class="ni" onclick="showPg('email',this)">✉️ Emails</button>
+  <button class="ni" onclick="showPg('checklist',this)">✅ Checklist</button>
+  <button class="ni" onclick="showPg('monitor',this)">🛡️ Monitor</button>
+  <div class="ni-spacer"></div>
+  <button class="ni" onclick="showPg('settings',this)">⚙️ Settings</button>
+  <button class="ni" onclick="goLanding()">← Back</button>
+</div>
+
+<div class="main">
+
+<!-- SCAN -->
+<div class="pg on" id="pg-scan">
+  <div class="pt">Scan your exposure</div>
+  <div class="ps">Follow the guide — search yourself, paste everything you find, then analyze.</div>
+
+  <div id="scan-warn" class="key-warn">⚠️ No API key. Go to <strong style="cursor:pointer;text-decoration:underline" onclick="showPg('settings',document.querySelectorAll('.ni')[5])">Settings</strong> first.</div>
+  <div id="scan-banner" class="key-banner" style="display:none">
+    <span id="scan-banner-txt"></span>
+    <button class="sec-btn" onclick="showPg('settings',document.querySelectorAll('.ni')[5])">Change</button>
+  </div>
+
+  <div class="guide-box">
+    <div class="guide-header" onclick="toggleGuide()">
+      <h4>📋 Where to find your data — click to expand</h4>
+      <span id="guide-arrow">▼ expand</span>
+    </div>
+    <div class="guide-body" id="guide-body">
+      <p style="font-size:12px;color:var(--muted);margin-bottom:16px">Open each in a new tab, copy what you find, paste it all below.</p>
+      <div class="search-step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <h5>Google your name</h5>
+          <span class="search-query" onclick="copyQ(this)">"Your Full Name"</span>
+          <span class="search-query" onclick="copyQ(this)">"Your Full Name" site:spokeo.com</span>
+          <span class="search-query" onclick="copyQ(this)">"Your Full Name" site:truecaller.com</span>
+          <span class="search-query" onclick="copyQ(this)">"Your Full Name" filetype:pdf</span>
+        </div>
+      </div>
+      <div class="search-step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <h5>Google your email</h5>
+          <span class="search-query" onclick="copyQ(this)">"youremail@gmail.com"</span>
+          <span class="search-query" onclick="copyQ(this)">"youremail@gmail.com" -site:gmail.com</span>
+          <p style="font-size:12px;color:var(--muted);margin-top:4px">Finds forums, old registrations, leaked databases where your email appears publicly.</p>
+        </div>
+      </div>
+      <div class="search-step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <h5>Check data breaches</h5>
+          <p style="font-size:12px;color:var(--muted)">Go to <a href="https://haveibeenpwned.com" target="_blank" style="color:var(--accent)">haveibeenpwned.com</a> → enter your email → copy the full breach list shown and paste it below.</p>
+        </div>
+      </div>
+      <div class="search-step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <h5>Google your phone number</h5>
+          <span class="search-query" onclick="copyQ(this)">"+91XXXXXXXXXX"</span>
+          <span class="search-query" onclick="copyQ(this)">"09XXXXXXXXX"</span>
+          <p style="font-size:12px;color:var(--muted);margin-top:4px">Finds Truecaller, JustDial, leaked PDFs like student enrollment sheets, directories.</p>
+        </div>
+      </div>
+      <div class="search-step">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <h5>Check Indian data brokers directly</h5>
+          <p style="font-size:12px;color:var(--muted)">Search your name on <a href="https://www.truecaller.com" target="_blank" style="color:var(--accent)">Truecaller</a>, <a href="https://www.justdial.com" target="_blank" style="color:var(--accent)">JustDial</a>, <a href="https://www.eyecon.mobi" target="_blank" style="color:var(--accent)">Eyecon</a>. Copy whatever you find.</p>
+        </div>
+      </div>
+      <div class="search-step" style="margin-bottom:0">
+        <div class="step-num">6</div>
+        <div class="step-body">
+          <h5>Find your registered accounts</h5>
+          <p style="font-size:12px;color:var(--muted)">Search Gmail for <strong style="color:var(--text)">"verify your email"</strong> — every result is a site you registered on. Then use <a href="https://justdeleteme.xyz" target="_blank" style="color:var(--accent)">justdeleteme.xyz</a> to get the delete link for each one.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="field"><label>Your full name</label><input type="text" id="s-name" placeholder="e.g. Mandeep Pathak"/></div>
+  <div class="field">
+    <label>Paste everything you found above</label>
+    <textarea id="s-raw" style="min-height:140px" placeholder="Paste Google results, HaveIBeenPwned breach list, Truecaller snippets, PDF links, old account lists — anything you found about yourself..."></textarea>
+  </div>
+  <button class="sbtn" id="scan-btn" onclick="doScan()">Analyze my exposure</button>
+  <div id="scan-load" class="loader" style="display:none"><div class="spin"></div>Analyzing your digital footprint...</div>
+  <div id="scan-out" style="margin-top:16px"></div>
+</div>
+
+<!-- EMAIL -->
+<div class="pg" id="pg-email">
+  <div class="pt">Generate deletion email</div>
+  <div class="ps">AI writes a legal letter — you copy and send it to the company.</div>
+  <div class="g2">
+    <div class="field"><label>Company</label><input type="text" id="e-company" placeholder="Spokeo, Truecaller, Scribd..."/></div>
+    <div class="field"><label>Jurisdiction</label>
+      <select id="e-region">
+        <option value="IN">India — DPDP Act 2023</option>
+        <option value="EU">EU / UK — GDPR</option>
+        <option value="US">USA — CCPA</option>
+      </select>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="field"><label>Your name</label><input type="text" id="e-name" placeholder="Mandeep Pathak"/></div>
+    <div class="field"><label>Your email</label><input type="email" id="e-email" placeholder="you@example.com"/></div>
+  </div>
+  <div class="field"><label>Data exposed (optional)</label><input type="text" id="e-data" placeholder="name, phone, address, enrollment data..."/></div>
+  <button class="sbtn" id="email-btn" onclick="doEmail()">Generate email</button>
+  <div id="email-load" class="loader" style="display:none"><div class="spin"></div>Writing legal deletion request...</div>
+  <div id="email-out"></div>
+  <div class="disclaimer">⚠️ AI-generated. Not legal advice. Review before sending.</div>
+</div>
+
+<!-- CHECKLIST -->
+<div class="pg" id="pg-checklist">
+  <div class="pt">Removal checklist</div>
+  <div class="ps">Direct opt-out links — no email needed. Tick each one as you complete it.</div>
+  <div class="rcard"><h4 style="margin-bottom:12px;color:var(--accent)">Data broker opt-outs</h4><div id="checklist-items"></div></div>
+  <div class="rcard"><h4 style="margin-bottom:10px;color:var(--accent)">Other critical steps</h4><div id="checklist-other"></div></div>
+</div>
+
+<!-- MONITOR -->
+<div class="pg" id="pg-monitor">
+  <div class="pt">Monitor & protect</div>
+  <div class="ps">Ongoing steps to stay private after removal.</div>
+
+  <div class="rcard" style="margin-bottom:12px">
+    <h4 style="color:var(--accent);margin-bottom:10px">🏦 Bank & credit card spam calls — how to stop them</h4>
+    <div class="fix-item">Register on TRAI DND: <a href="https://www.trai.gov.in/consumer-info/do-not-disturb" target="_blank" style="color:var(--accent)">trai.gov.in</a> or call <strong style="color:var(--text)">1909</strong> — select category "Financial services"</div>
+    <div class="fix-item">SMS <strong style="color:var(--text)">START DND</strong> to 1909 — blocks all commercial calls legally within 7 days</div>
+    <div class="fix-item">Banks legally cannot call DND-registered numbers for marketing — file a complaint at <a href="https://www.trai.gov.in/consumer-info/dnd-complaints" target="_blank" style="color:var(--accent)">trai.gov.in/dnd-complaints</a> if they still call</div>
+    <div class="fix-item">Your number got sold — this is legal in India via "consent" buried in loan/credit card application forms. Nothing you can do retroactively except DND + block.</div>
+    <div class="fix-item">Use the <strong style="color:var(--text)">Emails tab</strong> → write to the specific bank's Data Protection Officer citing DPDP Act 2023 Section 13 demanding deletion of your marketing data</div>
+    <div class="fix-item">For future: never tick "I agree to receive offers" on any bank form. Use a secondary number for financial applications.</div>
+  </div>
+
+  <div class="rcard" style="margin-bottom:12px">
+    <h4 style="color:var(--accent);margin-bottom:10px">📱 Phone number exposed — what to do</h4>
+    <div class="fix-item">Unlist from Truecaller: <a href="https://www.truecaller.com/unlisting" target="_blank" style="color:var(--accent)">truecaller.com/unlisting</a> — takes 24 hrs</div>
+    <div class="fix-item">Email JustDial: <a href="mailto:privacy@justdial.com" style="color:var(--accent)">privacy@justdial.com</a> requesting removal</div>
+    <div class="fix-item">If in a public PDF (college list, etc.) — email the institution directly, CC their IT/admin</div>
+    <div class="fix-item">Use a secondary SIM for app registrations going forward</div>
+  </div>
+
+  <div class="rcard" style="margin-bottom:12px">
+    <h4 style="color:var(--accent);margin-bottom:10px">📧 Email breached — what to do</h4>
+    <div class="fix-item">Change password everywhere you reused it — use <a href="https://bitwarden.com" target="_blank" style="color:var(--accent)">Bitwarden</a> (free) to manage unique passwords</div>
+    <div class="fix-item">Enable 2FA on Gmail, banking, Instagram, LinkedIn immediately</div>
+    <div class="fix-item">For new signups use email aliases: <a href="https://simplelogin.io" target="_blank" style="color:var(--accent)">SimpleLogin</a> (free, open source)</div>
+    <div class="fix-item">Monitor monthly at <a href="https://haveibeenpwned.com" target="_blank" style="color:var(--accent)">haveibeenpwned.com</a></div>
+  </div>
+
+  <div class="rcard" style="margin-bottom:12px">
+    <h4 style="color:var(--accent);margin-bottom:10px">🌐 Find all sites you've registered on</h4>
+    <div class="fix-item"><strong style="color:var(--text)">deseat.me is currently down.</strong> Alternative: search your Gmail for "welcome", "verify your email", "confirm your account" — every result is a site you registered on</div>
+    <div class="fix-item"><a href="https://justdeleteme.xyz" target="_blank" style="color:var(--accent)">justdeleteme.xyz</a> — search any site name, get the direct delete-account link</div>
+    <div class="fix-item">Google: <code style="background:var(--surface3);padding:1px 6px;border-radius:3px;font-size:11px">"yourusername" site:reddit.com</code> to find old forum accounts</div>
+    <div class="fix-item">Revoke unused app access: <a href="https://myaccount.google.com/permissions" target="_blank" style="color:var(--accent)">myaccount.google.com/permissions</a></div>
+  </div>
+
+  <div class="rcard">
+    <h4 style="color:var(--accent);margin-bottom:10px">🔄 Monthly routine</h4>
+    <div class="fix-item">Google your name + email + phone</div>
+    <div class="fix-item">Check haveibeenpwned.com for new breaches</div>
+    <div class="fix-item">Review Google app permissions, delete unused accounts</div>
+    <div class="fix-item">Report any DND violations at trai.gov.in</div>
+  </div>
+</div>
+
+<!-- SETTINGS -->
+<div class="pg" id="pg-settings">
+  <div class="pt">Settings</div>
+  <div class="ps">Your key stays in your browser only — never sent anywhere.</div>
+
+  <div class="rcard" style="margin-bottom:12px">
+    <label>AI Provider</label>
+    <div class="model-row" id="provider-chips">
+      <div class="model-chip on" data-provider="anthropic">Anthropic Claude</div>
+      <div class="model-chip" data-provider="openai">OpenAI GPT <span class="mt">free credits</span></div>
+      <div class="model-chip" data-provider="gemini">Google Gemini <span class="mt">free</span></div>
+      <div class="model-chip" data-provider="groq">Groq <span class="mt">free+fast</span></div>
+    </div>
+  </div>
+
+  <div class="rcard provider-block" id="block-anthropic" style="margin-bottom:12px">
+    <label>Anthropic key — <a href="https://console.anthropic.com" target="_blank" style="color:var(--accent)">get it here</a></label>
+    <input type="password" id="key-anthropic" placeholder="sk-ant-..." style="margin-bottom:10px"/>
+    <div class="model-row">
+      <div class="model-chip on" data-provider="anthropic" data-model="claude-haiku-4-5-20251001">Haiku 4.5 <span class="mt">fastest</span></div>
+      <div class="model-chip" data-provider="anthropic" data-model="claude-sonnet-4-6">Sonnet 4.6 <span class="mt">best</span></div>
+      <div class="model-chip" data-provider="anthropic" data-model="claude-opus-4-6">Opus 4.6</div>
+    </div>
+  </div>
+
+  <div class="rcard provider-block" id="block-openai" style="display:none;margin-bottom:12px">
+    <label>OpenAI key — <a href="https://platform.openai.com/api-keys" target="_blank" style="color:var(--accent)">get it here</a></label>
+    <input type="password" id="key-openai" placeholder="sk-..." style="margin-bottom:10px"/>
+    <div class="model-row">
+      <div class="model-chip on" data-provider="openai" data-model="gpt-4o-mini">GPT-4o Mini <span class="mt">free tier</span></div>
+      <div class="model-chip" data-provider="openai" data-model="gpt-4o">GPT-4o</div>
+    </div>
+  </div>
+
+  <div class="rcard provider-block" id="block-gemini" style="display:none;margin-bottom:12px">
+    <label>Gemini key — <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:var(--accent)">get it here</a></label>
+    <input type="password" id="key-gemini" placeholder="AIza..." style="margin-bottom:10px"/>
+    <div class="model-row">
+      <div class="model-chip on" data-provider="gemini" data-model="gemini-1.5-flash-latest">Gemini 1.5 Flash <span class="mt">free</span></div>
+      <div class="model-chip" data-provider="gemini" data-model="gemini-2.0-flash-exp">Gemini 2.0</div>
+    </div>
+  </div>
+
+  <div class="rcard provider-block" id="block-groq" style="display:none;margin-bottom:12px">
+    <label>Groq key — <a href="https://console.groq.com/keys" target="_blank" style="color:var(--accent)">get it here</a></label>
+    <input type="password" id="key-groq" placeholder="gsk_..." style="margin-bottom:10px"/>
+    <div class="model-row">
+      <div class="model-chip on" data-provider="groq" data-model="llama-3.3-70b-versatile">Llama 3.3 70B <span class="mt">free+fast</span></div>
+      <div class="model-chip" data-provider="groq" data-model="mixtral-8x7b-32768">Mixtral 8x7B</div>
+    </div>
+  </div>
+
+  <button class="sbtn" onclick="saveSettings()">Save settings</button>
+  <div id="key-status" style="font-size:12px;margin-top:10px;color:var(--accent)"></div>
+</div>
+
+</div></div></div>
+
+<script>
+let provider=localStorage.getItem('ghost_provider')||'anthropic';
+let model=localStorage.getItem('ghost_model')||'claude-haiku-4-5-20251001';
+let apiKey=localStorage.getItem('ghost_key_'+provider)||'';
+
+function openApp(){document.getElementById('landing').style.display='none';document.getElementById('app').style.display='block';refreshBanners();buildChecklist();}
+function goLanding(){document.getElementById('landing').style.display='block';document.getElementById('app').style.display='none';}
+function showPg(id,el){document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));document.getElementById('pg-'+id).classList.add('on');if(el)el.classList.add('on');}
+function refreshBanners(){const has=!!apiKey;document.getElementById('scan-warn').style.display=has?'none':'block';document.getElementById('scan-banner').style.display=has?'flex':'none';if(has)document.getElementById('scan-banner-txt').textContent=provider+' · '+model;}
+function toggleGuide(){const b=document.getElementById('guide-body');const a=document.getElementById('guide-arrow');const o=b.classList.toggle('open');a.textContent=o?'▲ collapse':'▼ expand';}
+function copyQ(el){navigator.clipboard.writeText(el.textContent.trim());const o=el.textContent;el.textContent='Copied!';setTimeout(()=>el.textContent=o,1500);}
+
+document.querySelectorAll('#provider-chips .model-chip').forEach(c=>{
+  c.addEventListener('click',()=>{
+    document.querySelectorAll('#provider-chips .model-chip').forEach(x=>x.classList.remove('on'));c.classList.add('on');
+    document.querySelectorAll('.provider-block').forEach(b=>b.style.display='none');
+    document.getElementById('block-'+c.dataset.provider).style.display='block';
+  });
+});
+document.querySelectorAll('.provider-block .model-chip').forEach(c=>{
+  c.addEventListener('click',()=>{document.querySelectorAll('#block-'+c.dataset.provider+' .model-chip').forEach(x=>x.classList.remove('on'));c.classList.add('on');});
+});
+function saveSettings(){
+  const p=document.querySelector('#provider-chips .model-chip.on').dataset.provider;
+  const k=document.getElementById('key-'+p).value.trim();
+  const m=document.querySelector('#block-'+p+' .model-chip.on').dataset.model;
+  if(!k){document.getElementById('key-status').textContent='Enter a key first.';return;}
+  localStorage.setItem('ghost_provider',p);localStorage.setItem('ghost_model',m);localStorage.setItem('ghost_key_'+p,k);
+  provider=p;model=m;apiKey=k;
+  document.getElementById('key-status').textContent='Saved: '+p+' · '+m;
+  refreshBanners();
+}
+
+async function resolveGemini(){
+  try{const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);const d=await r.json();if(d.error)return model;const list=(d.models||[]).map(m=>m.name.replace('models/',''));if(list.includes(model))return model;return list.find(m=>m.includes('flash'))||list[0]||model;}catch{return model;}
+}
+
+async function callAI(system,userMsg){
+  if(!apiKey)throw new Error('no_key');
+  if(provider==='anthropic'){
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01'},body:JSON.stringify({model,max_tokens:1500,system,messages:[{role:'user',content:userMsg}]})});
+    const d=await r.json();if(d.error)throw new Error(d.error.message);return d.content[0].text;
+  }
+  if(provider==='openai'){
+    const r=await fetch('https://api.openai.com/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+apiKey},body:JSON.stringify({model,messages:[{role:'system',content:system},{role:'user',content:userMsg}]})});
+    const d=await r.json();if(d.error)throw new Error(d.error.message);return d.choices[0].message.content;
+  }
+  if(provider==='gemini'){
+    const m=await resolveGemini();
+    const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent?key=${apiKey}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:system+'\n\n'+userMsg}]}],generationConfig:{maxOutputTokens:1500}})});
+    const d=await r.json();if(d.error)throw new Error(d.error.message);return d.candidates[0].content.parts[0].text;
+  }
+  if(provider==='groq'){
+    const r=await fetch('https://api.groq.com/openai/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+apiKey},body:JSON.stringify({model,messages:[{role:'system',content:system},{role:'user',content:userMsg}]})});
+    const d=await r.json();if(d.error)throw new Error(d.error.message||JSON.stringify(d.error));return d.choices[0].message.content;
+  }
+}
+
+async function doScan(){
+  if(!apiKey){showPg('settings',document.querySelectorAll('.ni')[5]);return;}
+  const name=document.getElementById('s-name').value.trim();
+  const raw=document.getElementById('s-raw').value.trim();
+  if(!name){alert('Enter your name.');return;}
+  document.getElementById('scan-btn').disabled=true;
+  document.getElementById('scan-load').style.display='flex';
+  document.getElementById('scan-out').innerHTML='';
+  const sys=`You are a digital privacy analyst. Respond ONLY with valid JSON, no markdown.
+Format: {"riskLevel":"High|Medium|Low","riskScore":0-100,"summary":"2 sentences","exposures":[{"source":"site","category":"Data Broker|Social Media|Old Account|Forum|Breach|PDF/Document","detail":"what found","priority":"High|Medium|Low","action":"exact removal step","fixes":["specific fix 1","specific fix 2","specific fix 3"]}]}
+For each exposure, provide 2-3 specific actionable fixes in the fixes array.`;
+  const msg=raw?`Analyze for ${name}:\n${raw}`:`No data provided. List common digital exposure risks for an average Indian internet user named ${name}.`;
+  try{
+    const txt=await callAI(sys,msg);
+    const data=JSON.parse(txt.replace(/```json|```/g,'').trim());
+    renderScan(data);
+  }catch(e){
+    document.getElementById('scan-out').innerHTML=`<div class="err">Error: ${e.message==='no_key'?'No API key — go to Settings.':e.message}</div>`;
+  }
+  document.getElementById('scan-btn').disabled=false;
+  document.getElementById('scan-load').style.display='none';
+}
+
+function renderScan(d){
+  const rc={High:'rH',Medium:'rM',Low:'rL'}[d.riskLevel]||'rL';
+  let h=`<div class="risk-strip ${rc}"><div class="rl">${d.riskLevel} Risk · ${d.riskScore}/100</div><p style="font-size:13px;color:var(--muted);margin-top:4px">${d.summary}</p></div>`;
+  (d.exposures||[]).sort((a,b)=>({High:0,Medium:1,Low:2}[a.priority]-{High:0,Medium:1,Low:2}[b.priority])).forEach(e=>{
+    const bc={High:'bH',Medium:'bM',Low:'bL'}[e.priority];
+    const fixes=(e.fixes||[]).map(f=>`<div class="fix-item">${f}</div>`).join('');
+    h+=`<div class="rcard">
+      <span class="badge ${bc}">${e.priority}</span> <span style="font-size:11px;color:var(--muted)">${e.category}</span>
+      <h4>${e.source}</h4>
+      <p style="margin-bottom:8px">${e.detail}</p>
+      <p style="color:var(--accent);font-size:12px;margin-bottom:${fixes?'8px':'0'}">→ ${e.action}</p>
+      ${fixes?`<div class="fix-box"><div class="fix-title">How to fix this</div>${fixes}</div>`:''}
+    </div>`;
+  });
+  h+=`<div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+    <button class="sbtn" style="font-size:13px;padding:9px 20px" onclick="showPg('email',document.querySelectorAll('.ni')[1])">Generate deletion emails →</button>
+    <button class="sec-btn" onclick="showPg('monitor',document.querySelectorAll('.ni')[3])">View protection guide →</button>
+  </div>`;
+  document.getElementById('scan-out').innerHTML=h;
+}
+
+async function doEmail(){
+  if(!apiKey){showPg('settings',document.querySelectorAll('.ni')[5]);return;}
+  const co=document.getElementById('e-company').value.trim();
+  const nm=document.getElementById('e-name').value.trim();
+  const em=document.getElementById('e-email').value.trim();
+  if(!co||!nm||!em){alert('Fill in company, name, and email.');return;}
+  document.getElementById('email-btn').disabled=true;
+  document.getElementById('email-load').style.display='flex';
+  document.getElementById('email-out').innerHTML='';
+  const reg=document.getElementById('e-region').value;
+  const law={IN:"India's DPDP Act 2023 Section 13",EU:"GDPR Article 17",US:"CCPA Section 1798.105"}[reg];
+  const dt=document.getElementById('e-data').value.trim();
+  try{
+    const txt=await callAI(`You are a data protection attorney. Write a formal personal data deletion request. Legal basis: ${law}. Plain text only. First line: SUBJECT: [subject]. Then email body. Include 30-day deadline and escalation warning.`,
+      `Deletion request to ${co} from ${nm} (${em}).${dt?' Data: '+dt:''}`);
+    const lines=txt.split('\n');
+    const subj=lines.find(l=>l.startsWith('SUBJECT:'))?.replace('SUBJECT:','').trim()||'Data Deletion Request';
+    const body=lines.filter(l=>!l.startsWith('SUBJECT:')).join('\n').trim();
+    document.getElementById('email-out').innerHTML=`<div style="margin-top:16px">
+      <div style="font-size:11px;color:var(--muted);margin-bottom:4px">SUBJECT</div>
+      <div class="rcard" style="padding:10px 14px;font-size:14px;margin-bottom:10px">${subj}</div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:4px">BODY</div>
+      <div class="email-out" id="email-body">${body}</div>
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <button class="cbtn" onclick="cp('email-body',this)">Copy body</button>
+        <button class="cbtn" onclick="cpBoth('${subj.replace(/'/g,"\\'")}','email-body',this)">Copy subject + body</button>
+      </div>
+      <p style="font-size:11px;color:var(--muted2);margin-top:8px">Legal basis: ${law}</p>
+    </div>`;
+  }catch(e){document.getElementById('email-out').innerHTML=`<div class="err">Error: ${e.message}</div>`;}
+  document.getElementById('email-btn').disabled=false;
+  document.getElementById('email-load').style.display='none';
+}
+
+const BROKERS=[
+  {name:'Spokeo',url:'https://www.spokeo.com/optout',note:'Fill form with your name'},
+  {name:'WhitePages',url:'https://www.whitepages.com/suppression_requests',note:'Requires phone verification'},
+  {name:'BeenVerified',url:'https://www.beenverified.com/opt-out/',note:'Enter name and opt out'},
+  {name:'Intelius',url:'https://www.intelius.com/opt-out',note:'Submit removal form'},
+  {name:'Truecaller',url:'https://www.truecaller.com/unlisting',note:'Enter phone number to unlist'},
+  {name:'JustDial',url:'mailto:privacy@justdial.com',note:'Email requesting removal'},
+  {name:'ZoomInfo',url:'https://www.zoominfo.com/about/privacy',note:'Request via privacy form'},
+  {name:'Pipl',url:'https://pipl.com/personal-information-removal-request/',note:'Submit removal request'},
+];
+const OTHER=[
+  {task:'haveibeenpwned.com',detail:'Check your email for breaches monthly',url:'https://haveibeenpwned.com'},
+  {task:'Find registered accounts via Gmail',detail:'Search Gmail for "verify your email" — every result is a signup. Use justdeleteme.xyz to delete them.',url:'https://justdeleteme.xyz'},
+  {task:'justdeleteme.xyz',detail:'Get direct delete-account links for any website',url:'https://justdeleteme.xyz'},
+  {task:'Google permissions',detail:'Revoke access from apps you no longer use',url:'https://myaccount.google.com/permissions'},
+  {task:'Google about you',detail:'See and remove what Google shows for your name',url:'https://myaccount.google.com/data-and-privacy'},
+];
+function buildChecklist(){
+  document.getElementById('checklist-items').innerHTML=BROKERS.map((b,i)=>`
+    <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)">
+      <input type="checkbox" id="b${i}" style="margin-top:3px;accent-color:var(--accent);width:14px;height:14px">
+      <label for="b${i}" style="text-transform:none;font-size:13px;cursor:pointer;color:var(--text)">
+        <strong>${b.name}</strong> — ${b.note}
+        <a href="${b.url}" target="_blank" style="display:block;color:var(--accent);font-size:11px;margin-top:2px">${b.url}</a>
+      </label>
+    </div>`).join('');
+  document.getElementById('checklist-other').innerHTML=OTHER.map((o,i)=>`
+    <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)">
+      <input type="checkbox" id="o${i}" style="margin-top:3px;accent-color:var(--accent);width:14px;height:14px">
+      <label for="o${i}" style="text-transform:none;font-size:13px;cursor:pointer;color:var(--text)">
+        <strong>${o.task}</strong> — ${o.detail}
+        ${o.url?`<a href="${o.url}" target="_blank" style="display:block;color:var(--accent);font-size:11px;margin-top:2px">${o.url}</a>`:''}
+      </label>
+    </div>`).join('');
+}
+
+function cp(id,btn){navigator.clipboard.writeText(document.getElementById(id).textContent);btn.textContent='Copied!';setTimeout(()=>btn.textContent='Copy body',2000);}
+function cpBoth(s,id,btn){navigator.clipboard.writeText('Subject: '+s+'\n\n'+document.getElementById(id).textContent);btn.textContent='Copied!';setTimeout(()=>btn.textContent='Copy subject + body',2000);}
+
+(function init(){
+  document.querySelectorAll('.provider-block').forEach(b=>b.style.display='none');
+  document.getElementById('block-'+provider).style.display='block';
+  ['anthropic','openai','gemini','groq'].forEach(p=>{const el=document.getElementById('key-'+p);if(el)el.value=localStorage.getItem('ghost_key_'+p)||'';});
+  document.querySelectorAll('#provider-chips .model-chip').forEach(c=>c.classList.toggle('on',c.dataset.provider===provider));
+  document.querySelectorAll('#block-'+provider+' .model-chip').forEach(c=>c.classList.toggle('on',c.dataset.model===model));
+})();
+</script>
+</body>
+</html>
